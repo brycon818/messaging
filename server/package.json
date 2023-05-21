@@ -10,14 +10,14 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@fastify/cors": "^8.2.0",
+    "@fastify/cors": "^8.2.1",
     "dotenv": "^16.0.3",
-    "fastify": "^4.11.0",
-    "stream-chat": "^8.2.1"
+    "fastify": "^4.17.0",
+    "stream-chat": "^8.7.0"
   },
   "devDependencies": {
     "@types/node": "^18.11.18",
-    "nodemon": "^2.0.20",
+    "nodemon": "^2.0.22",
     "ts-node": "^10.9.1"
   }
 }

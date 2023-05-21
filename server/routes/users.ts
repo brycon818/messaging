@@ -38,11 +38,11 @@ export async function userRoutes(app: FastifyInstance) {
     if (user == null) return res.status(401).send()
 
     const token = streamChat.createToken(id)
-    TOKEN_USER_ID_MAP.set(token, user.id)
-
+    TOKEN_USER_ID_MAP.set(token, user.id)    
+    
     return {
       token,
-      user: { name: user.name, id: user.id, image: user.image },
+      user: { name: user.name, id: user.id, image: user.image, role: user.role},
     }
   })
 

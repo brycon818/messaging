@@ -27,6 +27,7 @@ type User = {
   id: string
   name: string
   image?: string
+  role?: string
 }
 
 const Context = createContext<AuthContext | null>(null)
@@ -69,7 +70,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     },
     onSuccess(data) {
       setUser(data.user)
-      setToken(data.token)
+      setToken(data.token)                
     },
   })
 
@@ -86,7 +87,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   useEffect(() => {
     if (token == null || user == null) return
-    const chat = new StreamChat(import.meta.env.VITE_STREAM_API_KEY!)
+    const chat = new StreamChat(import.meta.env.VITE_STREAM_API_KEY!)    
 
     if (chat.tokenManager.token === token && chat.userID === user.id) return
 

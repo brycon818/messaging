@@ -46,13 +46,20 @@ export function NewChannel() {
       streamChat!.queryUsers({ id: { $ne: user.id } }, { name: 1 }),
     enabled: streamChat != null,
   })
+  const isAdmin = (user.role=="admin") 
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault()
 
-    const name = nameRef.current?.value
+    let name = nameRef.current?.value
     const imageUrl = imageUrlRef.current?.value
     const selectOptions = memberIdsRef.current?.getValue()
+    const isAdmin = (user.role=="admin") 
+    const memberIds: string[] = selectOptions.map(option => option.value)
+    
+    if (!isAdmin) 
+       name = memberIds[0]
+
     if (
       name == null ||
       name === "" ||
@@ -68,7 +75,7 @@ export function NewChannel() {
       memberIds: selectOptions.map(option => option.value),
     })
   }
-
+  
   return (
     <FullScreenCard>
       <FullScreenCard.Body>
@@ -79,22 +86,22 @@ export function NewChannel() {
           onSubmit={handleSubmit}
           className="grid grid-cols-[auto,1fr] gap-x-3 gap-y-5 items-center justify-items-end"
         >
-          <label htmlFor="name">Name</label>
-          <Input id="name" required ref={nameRef} />
-          <label htmlFor="imageUrl">Image Url</label>
-          <Input id="imageUrl" ref={imageUrlRef} />
-          <label htmlFor="members">Members</label>
+          {isAdmin && <label htmlFor="name">Name</label>}
+          {isAdmin && <Input id="name" required ref={nameRef} />}
+          {isAdmin && <label htmlFor="imageUrl">Image Url</label>}
+          {isAdmin && <Input id="imageUrl" ref={imageUrlRef} />}
+          <label htmlFor="members">Members</label>           
           <Select
             ref={memberIdsRef}
             id="members"
             required
-            isMulti
+            isAdmin //isMulti
             classNames={{ container: () => "w-full" }}
             isLoading={users.isLoading}
             options={users.data?.users.map(user => {
               return { value: user.id, label: user.name || user.id }
             })}
-          />
+          />          
           <Button
             disabled={createChannel.isLoading}
             type="submit"
