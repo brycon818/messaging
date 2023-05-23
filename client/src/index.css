@@ -22,3 +22,7 @@
     padding: 0;
     text-decoration: underline;
   }
+
+  .channel-list-container {       
+    overflow-y: auto; /* Enable vertical scrolling */
+  }

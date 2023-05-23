@@ -47,7 +47,7 @@ export function NewChannel() {
     enabled: streamChat != null,
   })
   const isAdmin = (user.role=="admin") 
-
+  
   function handleSubmit(e: FormEvent) {
     e.preventDefault()
 
@@ -55,10 +55,10 @@ export function NewChannel() {
     const imageUrl = imageUrlRef.current?.value
     const selectOptions = memberIdsRef.current?.getValue()
     const isAdmin = (user.role=="admin") 
-    const memberIds: string[] = selectOptions.map(option => option.value)
-    
+    const memberIds: string[] = selectOptions!.map(option => option.value)       
+        
     if (!isAdmin) 
-       name = memberIds[0]
+       name = memberIds[0] + ' : ' + user.name
 
     if (
       name == null ||
@@ -68,14 +68,32 @@ export function NewChannel() {
     ) {
       return
     }
-
+    
     createChannel.mutate({
       name,
       imageUrl,
       memberIds: selectOptions.map(option => option.value),
     })
   }
+ 
+  /*
+  async function asyncwrap(pName) {
+    const filter = { type: 'messaging', name: { $eq: pName } };
+    const sort = [{ last_message_at: -1 }];
+    const { streamChat, user } = useLoggedInAuth()
+
+    const channels = await streamChat.queryChannels(filter, sort, {
+    watch: true, // this is the default
+    state: true,
+  });
+
+    channels.map((channel) => {
+        console.log(channel.data.name, channel.cid)
+    })
+   
+   }*/
   
+ 
   return (
     <FullScreenCard>
       <FullScreenCard.Body>
@@ -90,18 +108,32 @@ export function NewChannel() {
           {isAdmin && <Input id="name" required ref={nameRef} />}
           {isAdmin && <label htmlFor="imageUrl">Image Url</label>}
           {isAdmin && <Input id="imageUrl" ref={imageUrlRef} />}
-          <label htmlFor="members">Members</label>           
+          <label htmlFor="members">Members</label>      
+          {isAdmin &&          
           <Select
             ref={memberIdsRef}
             id="members"
             required
-            isAdmin //isMulti
+            isMulti
             classNames={{ container: () => "w-full" }}
             isLoading={users.isLoading}
             options={users.data?.users.map(user => {
               return { value: user.id, label: user.name || user.id }
             })}
-          />          
+          />  }
+           {!isAdmin &&          
+          <Select
+            ref={memberIdsRef}
+            id="members"
+            required
+            false
+            classNames={{ container: () => "w-full" }}
+            isLoading={users.isLoading}
+            options={users.data?.users.map(user => {
+              return { value: user.id, label: user.name || user.id }
+            })}
+          />  }
+
           <Button
             disabled={createChannel.isLoading}
             type="submit"
