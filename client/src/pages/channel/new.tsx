@@ -125,8 +125,7 @@ export function NewChannel() {
           <Select
             ref={memberIdsRef}
             id="members"
-            required
-            false
+            required            
             classNames={{ container: () => "w-full" }}
             isLoading={users.isLoading}
             options={users.data?.users.map(user => {

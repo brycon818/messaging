@@ -25,7 +25,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 let msgid ='asdf'
-let sentNotifications = [];
+let sentNotifications : string[] = [];
 
 export function Home() {  
   
@@ -34,15 +34,14 @@ export function Home() {
   
   if (streamChat == null) return <LoadingIndicator />
 
-  if (
+  if (!(
     window.Notification &&
     (Notification.permission === 'granted' ||
       Notification.permission === 'denied')
-  )
-    ;
-  else
+  ))
+    {
     if (!showNotificationBanner)
-    setShowNotificationBanner(true);   
+    setShowNotificationBanner(true);   }
 
     function grantPermission() {        
       if (Notification.permission === 'granted') {      
@@ -51,8 +50,8 @@ export function Home() {
       }
       
       if (
-        Notification.permission !== 'denied' ||
-        Notification.permission === 'default'
+        Notification.permission === "denied" ||
+        Notification.permission === "default"
       ) {
         Notification.requestPermission().then(result => {
           if (result === 'granted') {
@@ -72,7 +71,7 @@ export function Home() {
       <ToastContainer />
       <link id="favicon" rel="icon" href="/favicon.ico" />
       {showNotificationBanner && (
-          <div class="alert">
+          <div className="alert">
             <p>
               PFS needs your permission to&nbsp;
               <button onClick={grantPermission}>
@@ -123,9 +122,9 @@ function Channels({ loadedChannels }: ChannelListMessengerProps) {
               : "hover:bg-blue-100 bg-gray-100"  
             let channelName = channel.data?.name
             const regex = new RegExp("\\b" + user.name + "\\b", "g");
-            channelName = channelName.replace(regex, "");
+            channelName = channelName?.replace(regex, "");
 
-            channelName = channelName.split(' : ').join("");
+            channelName = channelName?.split(' : ').join("");
 
             
                                      
@@ -134,7 +133,7 @@ function Channels({ loadedChannels }: ChannelListMessengerProps) {
                  //console.log('event',event)
                  const notifMessage = event.message?.id
             
-                 if (event.type === 'message.new' && event.unread_count > 0) {                  
+                 if (event.type === 'message.new' && event.unread_count! > 0) {                  
                  /* // console.log(channel.data?.name)
                   toast.dismiss()
                  toast.success("New Message: " + event.user.name)
@@ -142,25 +141,25 @@ function Channels({ loadedChannels }: ChannelListMessengerProps) {
                  sound.volume = 0.5
                   sound.play();  */               
                  
-                 if (!sentNotifications.includes(notifMessage)) {
+                 if (!(sentNotifications.includes(notifMessage!))) {
                     console.log(notifMessage)
-                    sentNotifications.push(notifMessage);  
-                    toast.success(event.user.name + " : " + event.message.text)                 
-                   notification = new Notification(event.user.name, {
-                        body: event.message.text,                    
+                    sentNotifications.push(notifMessage!);  
+                    toast.success(event.user?.name + " : " + event.message?.text)                 
+                   const notification = new Notification(event.user?.name!, {
+                        body: event.message?.text,                    
                       })   
-                   Notification.close()                
+                               
                       
                     }          
                                    
       
-                  document.getElementById('favicon').href =
-                    'https://d1nhio0ox7pgb.cloudfront.net/_img/g_collection_png/standard/128x128/bell.png';
+                //  document.getElementById('favicon').href =
+                  //  'https://d1nhio0ox7pgb.cloudfront.net/_img/g_collection_png/standard/128x128/bell.png';
                 }
       
-                if (event.type === 'message.read' && !event.total_unread_count) {
-                  document.getElementById('favicon').href = '/vite.svg';
-                  }
+                //if (event.type === 'message.read' && !event.total_unread_count) {
+                 // document.getElementById('favicon').href = '/vite.svg';
+                 // }
                 
                 if (event.type === 'message.read' ) {
                     sentNotifications = []
