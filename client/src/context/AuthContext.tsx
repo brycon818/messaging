@@ -67,7 +67,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const login = useMutation({
     mutationFn: (id: string) => {
       return axios
-        .post(`${import.meta.env.VITE_SERVER_URL}/login`, { id }, {
+        .post("https://cors-anywhere.herokuapp.com/" + `${import.meta.env.VITE_SERVER_URL}/login`, { id }, {
           headers: {
             'Access-Control-Allow-Origin': '*',
           },
