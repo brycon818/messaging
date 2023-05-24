@@ -159,7 +159,7 @@ function Channels({ loadedChannels }: ChannelListMessengerProps) {
                 }
       
                 if (event.type === 'message.read' && !event.total_unread_count) {
-                  document.getElementById('favicon').href = '/favicon.ico';
+                  document.getElementById('favicon').href = '/vite.svg';
                   }
                 
                 if (event.type === 'message.read' ) {
