@@ -53,7 +53,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const signup = useMutation({
     mutationFn: (user: User) => {
-      return axios.post(`${import.meta.env.VITE_SERVER_URL}/signup`, user)
+      return axios.post(`${import.meta.env.VITE_SERVER_URL}/signup`, user, {
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+        },
+      })
     },
     onSuccess() {
       navigate("/login")
@@ -63,7 +67,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const login = useMutation({
     mutationFn: (id: string) => {
       return axios
-        .post(`${import.meta.env.VITE_SERVER_URL}/login`, { id })
+        .post(`${import.meta.env.VITE_SERVER_URL}/login`, { id }, {
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+          },
+        })
         .then(res => {
           return res.data as { token: string; user: User }
         })
@@ -76,7 +84,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const logout = useMutation({
     mutationFn: () => {
-      return axios.post(`${import.meta.env.VITE_SERVER_URL}/logout`, { token })
+      return axios.post(`${import.meta.env.VITE_SERVER_URL}/logout`, { token }, {
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+        },
+      })
     },
     onSuccess() {
       setUser(undefined)
