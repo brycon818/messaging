@@ -39,7 +39,8 @@ export async function userRoutes(app: FastifyInstance) {
 
     const token = streamChat.createToken(id)
     TOKEN_USER_ID_MAP.set(token, user.id)    
-    //res.set('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Origin', '*');
+    //res.header('Access-Control-Allow-Origin', '*');
     return {
       token,
       user: { name: user.name, id: user.id, image: user.image, role: user.role},
