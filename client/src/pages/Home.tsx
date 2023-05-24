@@ -8,6 +8,7 @@ import {
   MessageInput,
   MessageList,
   ChannelHeader,
+  Thread
 } from "stream-chat-react"
 import { ChannelListMessengerProps } from "stream-chat-react/dist/components"
 import { useChatContext } from "stream-chat-react/dist/context"
@@ -91,6 +92,7 @@ export function Home() {
           <MessageList />
           <MessageInput />
         </Window>
+        <Thread />
       </Channel>      
     </Chat>
   )
