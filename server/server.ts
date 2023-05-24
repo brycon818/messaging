@@ -6,7 +6,7 @@ import cors from "@fastify/cors"
 import { userRoutes } from "./routes/users"
 
 const app = fastify()
-app.register(cors, { origin: true,
+app.register(cors, { origin: process.env.CLIENT_URL,
     methods: ['GET', 'PUT', 'POST'],
     preflight:false})
 app.register(userRoutes)
