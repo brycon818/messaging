@@ -109,8 +109,10 @@ function Channels({ loadedChannels }: ChannelListMessengerProps) {
   return (
     
     <div className="w-65 flex flex-col gap-4 m-3 h-full">
-      <div className="w-60 flex flex-col gap-4 m-3">
-      <h1 className="text-2xl font-bold mb-8 text-center">Prithibi Field Service</h1>     
+      <div className="w-65 boder-none flex flex-col gap-2 m-0" >      
+        <div className="w-65 boder-none flex flex-col gap-2 mb-2">
+          <img src="/assets/pcds_logo.png" alt="Logo"/>
+        </div>
       <Button          
           onClick={() => navigate("/channel/new")}>New Conversation</Button>
       <hr className="border-gray-500" />
@@ -119,33 +121,39 @@ function Channels({ loadedChannels }: ChannelListMessengerProps) {
       {loadedChannels != null && loadedChannels.length > 0
         ? loadedChannels.map(channel => {
             const isActive = channel === activeChannel
-            const extraClasses = isActive
+            let extraClasses = ""
+            if (channel.state.unreadCount > 0) {
+               extraClasses = "hover:bg-blue-100 bg-yellow-100"
+            }
+            else {
+               extraClasses = isActive
               ? "bg-blue-500 text-white"
               : "hover:bg-blue-100 bg-gray-100"  
+            }
             let channelName = channel.data?.name
             const regex = new RegExp("\\b" + user.name + "\\b", "g");
             channelName = channelName?.replace(regex, "");
-
             channelName = channelName?.split(' : ').join("");
-
-            
-                                     
+                                               
               try {
               channel.on( event => {
-                 //console.log('event',event)
+                 console.log('event',event)
                  const notifMessage = event.message?.id
             
-                 if (event.type === 'message.new' && event.unread_count! > 0) {                  
+                 if (event.type === 'message.new' && event.unread_count! > 0) {   
+                         
                  /* // console.log(channel.data?.name)
                   toast.dismiss()
                  toast.success("New Message: " + event.user.name)
                  const sound = new Audio('/assets/sound17.ogg');
                  sound.volume = 0.5
-                  sound.play();  */               
+                  sound.play();  */   
+                 // extraClasses = "hover:bg-blue-100 bg-gray-100"            
                  
                  if (!(sentNotifications.includes(notifMessage!))) {
-                    console.log(notifMessage)
+                    
                     sentNotifications.push(notifMessage!);  
+                    toast.dismiss() 
                     toast.success(event.user?.name + " : " + event.message?.text)                 
                    const notification = new Notification(event.user?.name!, {
                         body: event.message?.text,                    
@@ -166,12 +174,13 @@ function Channels({ loadedChannels }: ChannelListMessengerProps) {
                 if (event.type === 'message.read' ) {
                     sentNotifications = []
                     }  
+                    
               });  
             } catch (err) {              
               console.log(err);
               return;
             }
-          
+            
             return (
               <button
                 onClick={() => setActiveChannel(channel)}

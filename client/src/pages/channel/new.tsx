@@ -24,12 +24,12 @@ export function NewChannel() {
       if (streamChat == null) throw Error("Not connected")
 
       return streamChat
-        .channel("messaging", crypto.randomUUID(), {
+        .channel("messaging", name.replace(/\s/g, '-').replace(":", ""), {
           name,
           image: imageUrl,
           members: [user.id, ...memberIds],
         })
-        .create()
+        .watch()
     },
     onSuccess() {
       navigate("/")
@@ -59,7 +59,7 @@ export function NewChannel() {
         
     if (!isAdmin) 
        name = memberIds[0] + ' : ' + user.name
-
+    
     if (
       name == null ||
       name === "" ||
