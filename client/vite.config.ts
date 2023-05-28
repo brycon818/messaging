@@ -7,9 +7,9 @@ export default defineConfig({
   build: {
     rollupOptions: {
       input: {
-        main: resolve(__dirname, 'main.tsx'),
-        nested: resolve(__dirname, 'pages/Login.tsx'),
-        nested: resolve(__dirname, 'pages/LogoutPage.tsx'),
+        main: resolve(__dirname, 'index.html'),
+        nested: resolve(__dirname, 'src/pages/Login.tsx'),
+        nested: resolve(__dirname, 'src/pages/LogoutPage.tsx'),
       },
     },
   },
