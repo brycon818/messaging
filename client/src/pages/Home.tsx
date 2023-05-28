@@ -112,7 +112,7 @@ function Channels({ loadedChannels }: ChannelListMessengerProps) {
       <div className="w-65 boder-none flex flex-col gap-2 m-0" >      
         <div className="w-65 boder-none flex flex-col gap-2 mb-2">
           <img src="/assets/pcds_logo.png" alt="Logo"/>
-        </div>
+        </div>        
       <Button          
           onClick={() => navigate("/channel/new")}>New Conversation</Button>
       <hr className="border-gray-500" />
