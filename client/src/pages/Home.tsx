@@ -34,7 +34,7 @@ export function Home() {
   const [showNotificationBanner, setShowNotificationBanner] = useState(false);
   
   if (streamChat == null) return <LoadingIndicator />
-
+  console.log(Notification.permission)
   if (!(
     window.Notification &&
     (Notification.permission === 'granted' ||
@@ -49,7 +49,7 @@ export function Home() {
         toast.success('You are already subscribed to web notifications');
         return;
       }
-      console.log(Notification.permission)
+      
       if (
         Notification.permission === "denied" ||
         Notification.permission === "default"
@@ -137,7 +137,7 @@ function Channels({ loadedChannels }: ChannelListMessengerProps) {
                                                
               try {
               channel.on( event => {
-                 console.log('event',event)
+                 
                  const notifMessage = event.message?.id
             
                  if (event.type === 'message.new' && event.unread_count! > 0) {   
