@@ -14,6 +14,7 @@ export default defineConfig({
       input: {
         main: resolve(__dirname, 'index.html'),
         login: resolve(__dirname, 'src/pages/Loginindex.html'),
+        logout: resolve(__dirname, 'src/pages/LogoutPageindex.html'),
       },
     },
   },
