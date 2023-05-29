@@ -19,7 +19,7 @@ export function Login() {
 
   const urlParams = new URLSearchParams(window.location.search)
   const username = urlParams.get('username')
-  console.log(username)
+  
   useEffect(() => {
     if (username && !isAuthenticated.current) {
       isAuthenticated.current = true;
