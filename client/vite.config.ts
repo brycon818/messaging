@@ -3,23 +3,18 @@ import react from '@vitejs/plugin-react-swc'
 import { resolve } from 'path'
 import reactRefresh from '@vitejs/plugin-react-refresh'
 
-const root =resolve(__dirname, '.')
+const root =resolve(__dirname, 'src')
 const outDir = resolve(__dirname,'dist')
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  root,
-  plugins: [reactRefresh()],
+  plugins: [reactRefresh(),react()], 
   build: {
-    rollupOptions: {  
-      outDir,
-      emptyOutDir: true,
+    rollupOptions: {
       input: {
         main: resolve(__dirname, 'index.html'),
-        login: resolve(__dirname, 'src/pages/Login.tsx'),
-        logout: resolve(__dirname, 'src/pages/LogoutPage.tsx'),
+        login: resolve(__dirname, 'src/pages/Loginindex.html'),
       },
     },
   },
-  plugins: [react()],
 })
