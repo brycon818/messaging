@@ -201,7 +201,10 @@ function Channels({ loadedChannels }: ChannelListMessengerProps) {
             )
           })
         : "No Conversations"}
-      
+      <hr className="border-gray-500 mt-auto" />
+      <Button onClick={() => navigate("/logout")} disabled={logout.isLoading}>
+        Logout
+      </Button>
 </div>
     </div>
   )

@@ -11,8 +11,8 @@ export function AuthLayout() {
         <Outlet />
       </FullScreenCard.Body>
       <FullScreenCard.BelowCard>
-        <Link to={isLoginPage ? "/signup" : "/login"}>
-          {isLoginPage ? "Create Account" : "Login"}
+        <Link to={isLoginPage ? "" : "/login"}>
+          {isLoginPage ? "" : "Login"}
         </Link>
       </FullScreenCard.BelowCard>
     </FullScreenCard>
