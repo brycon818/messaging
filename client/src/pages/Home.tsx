@@ -49,7 +49,7 @@ export function Home() {
         toast.success('You are already subscribed to web notifications');
         return;
       }
-      
+      console.log(Notification.permission)
       if (
         Notification.permission === "denied" ||
         Notification.permission === "default"
