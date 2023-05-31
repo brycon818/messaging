@@ -14,7 +14,7 @@ import {
 import { ChannelListMessengerProps } from "stream-chat-react/dist/components"
 import { useChatContext } from "stream-chat-react/dist/context"
 import { Button } from "../components/Button"
-import {CustomPreview} from "../components/Channel"
+
 import { useLoggedInAuth } from "../context/AuthContext"
 import {
   createContext,
