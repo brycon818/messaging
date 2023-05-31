@@ -8,11 +8,13 @@ import {
   MessageInput,
   MessageList,
   ChannelHeader,
-  Thread
+  Thread,
+  ChannelPreviewUIComponentProps,
 } from "stream-chat-react"
 import { ChannelListMessengerProps } from "stream-chat-react/dist/components"
 import { useChatContext } from "stream-chat-react/dist/context"
 import { Button } from "../components/Button"
+import {CustomPreview} from "../components/Channel"
 import { useLoggedInAuth } from "../context/AuthContext"
 import {
   createContext,
@@ -24,6 +26,8 @@ import {
 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+//import 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css'
+   
 
 let msgid ='asdf'
 let sentNotifications : string[] = [];
@@ -65,12 +69,10 @@ export function Home() {
       }
       setShowNotificationBanner(false);
     }
- 
-
-  return (    
-    <Chat client={streamChat}>
-      <ToastContainer />
-      <link id="favicon" rel="icon" href="/favicon.ico" />
+     
+  return (           
+    <Chat client={streamChat}>      
+      <ToastContainer />      
       {showNotificationBanner && (
           <div className="alert">
             <p>
@@ -81,9 +83,9 @@ export function Home() {
             </p>
           </div>
         )}
-      <ChannelList       
+        <ChannelList       
         List={Channels}
-        sendChannelsToList
+        sendChannelsToList               
         filters={{ members: { $in: [user.id] } }}
       />
       <Channel>
@@ -104,20 +106,27 @@ function Channels({ loadedChannels }: ChannelListMessengerProps) {
   const { logout } = useLoggedInAuth()
   const { setActiveChannel, channel: activeChannel } = useChatContext()
   const { user, streamChat } = useLoggedInAuth()
-
+ 
     
   return (
     
     <div className="w-65 flex flex-col gap-4 m-3 h-full">
       <div className="w-65 boder-none flex flex-col gap-2 m-0" >      
-        <div className="w-65 boder-none flex flex-col gap-2 mb-2">
-          <img src="/assets/pcds_logo.png" alt="Logo"/>
-        </div>        
+        <div className="w-65 boder-none flex flex-col gap-2 mb-2 float-left inline-block">
+          <button 
+             disabled
+          >
+            <img src="/assets/favicon.png" alt="Logo" className="w-16 h-16 float-left inline-block"/>
+          <p className="ml-2 mt-2 float-left inline-block site-identity">Prithibi Consulting and  
+          <br/>Development Services</p>
+          </button>
+        </div>       
       <Button          
-          onClick={() => navigate("/channel/new")}>New Conversation</Button>
+          onClick={() => navigate("/channel/new")}>{user.name}</Button>
       <hr className="border-gray-500" />
       </div>
-      <div className="mt-0 w-60 flex flex-col gap-4 m-3 h-full items-center channel-list-container">
+      
+      <div className="mt-0 w-60 flex flex-col gap-2 m-3 h-full items-center channel-list-container">
       {loadedChannels != null && loadedChannels.length > 0
         ? loadedChannels.map(channel => {
             const isActive = channel === activeChannel
@@ -134,6 +143,13 @@ function Channels({ loadedChannels }: ChannelListMessengerProps) {
             const regex = new RegExp("\\b" + user.name + "\\b", "g");
             channelName = channelName?.replace(regex, "");
             channelName = channelName?.split(' : ').join("");
+            const renderMessageText = () => {
+              const lastMessageText = channel.state.messages[channel.state.messages.length - 1].text;
+          
+              const text = lastMessageText || 'message text';
+          
+              return text.length < 60 ? lastMessageText : `${text.slice(0, 70)}...`;
+            };
                                                
               try {
               channel.on( event => {
@@ -158,10 +174,8 @@ function Channels({ loadedChannels }: ChannelListMessengerProps) {
                    const notification = new Notification(event.user?.name!, {
                         body: event.message?.text,                    
                       })   
-                               
-                      
-                    }          
-                                   
+                                                     
+                    }                                             
       
                 //  document.getElementById('favicon').href =
                   //  'https://d1nhio0ox7pgb.cloudfront.net/_img/g_collection_png/standard/128x128/bell.png';
@@ -173,8 +187,7 @@ function Channels({ loadedChannels }: ChannelListMessengerProps) {
                 
                 if (event.type === 'message.read' ) {
                     sentNotifications = []
-                    }  
-                    
+                    }                      
               });  
             } catch (err) {              
               console.log(err);
@@ -185,10 +198,10 @@ function Channels({ loadedChannels }: ChannelListMessengerProps) {
               <button
                 onClick={() => setActiveChannel(channel)}
                 disabled={isActive}
-                className={` w-11/12 p-4 rounded-lg flex gap-3 items-center ${extraClasses}`}
+                className={` w-11/12 p-2 rounded-lg flex gap-3 items-center ${extraClasses}`}
                 key={channel.id}
               >
-                {channel.data?.image && (
+              {channel.data?.image && (
                   <img
                     src={channel.data.image}
                     className="w-10 h-10 rounded-full object-center object-cover"
@@ -196,7 +209,7 @@ function Channels({ loadedChannels }: ChannelListMessengerProps) {
                 )}
                 <div className="text-ellipsis overflow-hidden whitespace-nowrap">
                   {channelName || channel.id}
-                </div>
+                </div>   
               </button>
             )
           })
@@ -206,6 +219,6 @@ function Channels({ loadedChannels }: ChannelListMessengerProps) {
         Logout
       </Button>
 </div>
-    </div>
+   </div>
   )
 }
