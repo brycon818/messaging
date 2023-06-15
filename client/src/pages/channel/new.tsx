@@ -7,6 +7,7 @@ import { Link } from "../../components/Link"
 import Select, { SelectInstance } from "react-select"
 import { useLoggedInAuth } from "../../context/AuthContext"
 import { useNavigate } from "react-router-dom"
+import { ThreadIcon } from "stream-chat-react"
 
 export function NewChannel() {
   const { streamChat, user } = useLoggedInAuth()
@@ -14,20 +15,19 @@ export function NewChannel() {
   const createChannel = useMutation({
     mutationFn: ({
       name,
-      memberIds,
-      imageUrl,
+      memberIds,     
+      channelType
     }: {
       name: string
-      memberIds: string[]
-      imageUrl?: string
+      memberIds: string[]      
+      channelType:string
     }) => {
       if (streamChat == null) throw Error("Not connected")
-
+      console.log(channelType)
       return streamChat
-        .channel("messaging", name.replace(/\s/g, '-').replace(":", ""), {
-          name,
-          image: imageUrl,
-          members: [user.id, ...memberIds],
+        .channel(channelType, name.replace(/\s/g, '-').replace(":", ""), {
+          name,         
+          members: [user.id, ...memberIds]          
         })
         .watch()
     },
@@ -36,7 +36,7 @@ export function NewChannel() {
     },
   })
   const nameRef = useRef<HTMLInputElement>(null)
-  const imageUrlRef = useRef<HTMLInputElement>(null)
+  
   const memberIdsRef =
     useRef<SelectInstance<{ label: string; value: string }>>(null)
 
@@ -49,17 +49,24 @@ export function NewChannel() {
   const isAdmin = (user.role=="admin") 
   
   function handleSubmit(e: FormEvent) {
-    e.preventDefault()
+    e.preventDefault()    
 
     let name = nameRef.current?.value
-    const imageUrl = imageUrlRef.current?.value
+    
     const selectOptions = memberIdsRef.current?.getValue()
     const isAdmin = (user.role=="admin") 
-    const memberIds: string[] = selectOptions!.map(option => option.value)       
+    const memberIds: string[] = selectOptions!.map(option => option.value)   
+    let channelType = "messaging"    
         
-    if (!isAdmin) 
-       name = memberIds[0] + ' : ' + user.name
+    //if (!isAdmin) 
+      // name = memberIds[0] + ' : ' + user.name
     
+    if (memberIds.length > 1)
+       channelType = "team"  
+       
+    if (name==null || name==="")
+        name = memberIds[0] + ' : ' + user.name       
+
     if (
       name == null ||
       name === "" ||
@@ -70,14 +77,14 @@ export function NewChannel() {
     }
     
     createChannel.mutate({
-      name,
-      imageUrl,
+      name,      
       memberIds: selectOptions.map(option => option.value),
+      channelType
     })
   }
  
-  /*
-  async function asyncwrap(pName) {
+  
+  /*async function asyncwrap(pName) {
     const filter = { type: 'messaging', name: { $eq: pName } };
     const sort = [{ last_message_at: -1 }];
     const { streamChat, user } = useLoggedInAuth()
@@ -105,9 +112,7 @@ export function NewChannel() {
           className="grid grid-cols-[auto,1fr] gap-x-3 gap-y-5 items-center justify-items-end"
         >
           {isAdmin && <label htmlFor="name">Name</label>}
-          {isAdmin && <Input id="name" required ref={nameRef} />}
-          {isAdmin && <label htmlFor="imageUrl">Image Url</label>}
-          {isAdmin && <Input id="imageUrl" ref={imageUrlRef} />}
+          {isAdmin && <Input id="name" ref={nameRef} />}          
           <label htmlFor="members">Members</label>      
           {isAdmin &&          
           <Select
@@ -131,8 +136,8 @@ export function NewChannel() {
             options={users.data?.users.map(user => {
               return { value: user.id, label: user.name || user.id }
             })}
-          />  }
-
+          />  }         
+         
           <Button
             disabled={createChannel.isLoading}
             type="submit"
@@ -140,7 +145,9 @@ export function NewChannel() {
           >
             {createChannel.isLoading ? "Loading.." : "Create"}
           </Button>
-        </form>
+        
+         </form>                                     
+        
       </FullScreenCard.Body>
       <FullScreenCard.BelowCard>
         <Link to="/">Back</Link>

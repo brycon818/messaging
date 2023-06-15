@@ -8,6 +8,7 @@ import { Login } from "./pages/Login"
 import { Signup } from "./pages/Signup"
 import { LogoutPage } from "./pages/LogoutPage"
 
+
 export const router = createBrowserRouter([
   {
     element: <ContextWrapper />,

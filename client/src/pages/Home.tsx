@@ -9,11 +9,16 @@ import {
   MessageList,
   ChannelHeader,
   Thread,
-  ChannelPreviewUIComponentProps,
+  ChannelPreviewUIComponentProps,  
+  Avatar,
+  useChannelStateContext,
+  ChannelHeaderProps,
+  InfiniteScroll,
 } from "stream-chat-react"
 import { ChannelListMessengerProps } from "stream-chat-react/dist/components"
 import { useChatContext } from "stream-chat-react/dist/context"
 import { Button } from "../components/Button"
+
 
 import { useLoggedInAuth } from "../context/AuthContext"
 import {
@@ -27,18 +32,32 @@ import {
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 //import 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css'
-   
 
-let msgid ='asdf'
+import { ChannelMembers} from "./ChannelMembers"
+
 let sentNotifications : string[] = [];
 
 export function Home() {  
-  
-  const { user, streamChat } = useLoggedInAuth()
+  const urlParams = new URLSearchParams(window.location.search);
+  const { user, streamChat,  } = useLoggedInAuth()
   const [showNotificationBanner, setShowNotificationBanner] = useState(false);
+  const theme = urlParams.get('theme') || 'light';
   
   if (streamChat == null) return <LoadingIndicator />
-  console.log(Notification.permission)
+  
+
+ /* useEffect(() => {
+    channel.on( event => {
+      event.preventDefault();
+      if (event.type === 'message.new' && event.unread_count! > 0) { 
+        const notification = new Notification(event.user?.name!, {
+          body: event.message?.text,                    
+        })   
+      }
+    });
+  }, [channel]);*/
+  
+  
   if (!(
     window.Notification &&
     (Notification.permission === 'granted' ||
@@ -69,9 +88,11 @@ export function Home() {
       }
       setShowNotificationBanner(false);
     }
+
+    
      
   return (           
-    <Chat client={streamChat}>      
+    <Chat client={streamChat} >      
       <ToastContainer />      
       {showNotificationBanner && (
           <div className="alert">
@@ -82,15 +103,16 @@ export function Home() {
               </button>
             </p>
           </div>
-        )}
+        )}                          
         <ChannelList       
         List={Channels}
         sendChannelsToList               
-        filters={{ members: { $in: [user.id] } }}
+        filters={ {$and: [{ members: { $in: [user.id] } },{ teams: {}  }]}}
+        Paginator={InfiniteScroll}
       />
       <Channel>
-        <Window>
-          <ChannelHeader />
+        <Window>              
+          <CustomChannelHeader />                                          
           <MessageList />
           <MessageInput />
         </Window>
@@ -100,7 +122,112 @@ export function Home() {
   )
 }
   
+function CustomChannelHeader  (props: ChannelHeaderProps) {
+  const { title } = props;
+  const navigate = useNavigate()
+
+  const { channel, watcher_count } = useChannelStateContext();
+  const { name } = channel.data || {};  
+  const { client } = useChatContext();
+  const  user2 = useLoggedInAuth();
   
+            
+
+  const getWatcherText = (watchers: number | undefined) => {
+    if (!watchers) return 'No users online';
+    if (watchers === 1) return (channel?.data?.type==="team" ?'1 online' : 'Offline');
+    if (watchers === 2) return (channel?.data?.type==="team" ?'2 online' : 'Online');
+    return `${watchers} online`;
+  };
+
+  const [clicked, setClicked] = useState(false);
+  
+  const handleClick = () => {
+    setClicked(!clicked);
+  };
+
+  
+ if (channel?.data?.type==="team") {
+    let members = Object.values(channel.state.members)
+    
+    return (
+      <div className='str-chat__header-livestream'>
+        <div className="block">
+        <div>
+        <button
+            className="flex"
+            onClick={handleClick}
+        >
+            <div>
+                <img
+                  src="/assets/icons8-hashtags-64.png"
+                        className="w-10 h-10 rounded-full object-center object-cover bg-blue-200"
+                />           
+            </div>
+            <div className="pl-2">
+                <div className="float-left text-sm font-bold text-ellipsis overflow-hidden whitespace-nowrap">
+                      {title || name}               
+                </div>   
+                <div className='clear-left text-sm'>
+                    <p>{members.length} members, {getWatcherText(watcher_count)}</p>
+                </div> 
+            </div>
+        </button>
+        </div>
+        {clicked && (
+           <div className="text-sm pt-2">
+              <ul >
+                <li className="font-bold flex">Channel Members:</li>
+                {members.map((member) => (
+                  <li key={member?.user?.name}>                   
+                  <span>{(member?.user?.fullName || member?.user?.name) as string} - </span>
+                  <span className = {member?.user?.online ? "text-green-600" : "text-red-500"}>{member?.user?.online ? 'Online' : 'Offline'}</span>                  
+          </li>
+        ))}
+      </ul>   
+
+           </div>
+        )
+        }
+        </div>
+      </div>
+    );
+ }
+ else {
+    let channelName = channel.data?.name
+    let imageSource = "";
+           
+    
+    let members = Object.values(channel.state.members).filter(({ user }) => user?.id !== client?.user?.id)
+    
+    channelName =  members[0]?.user?.fullName as string || members[0]?.user?.name || members[0]?.user?.id as string
+    imageSource = members[0]?.user?.image as string;
+           
+
+  return (
+    <div className='str-chat__header-livestream'>
+      <div
+        className="inline-flex flex-row items-center"
+      ><div>
+      
+                  <img
+                    src={imageSource || "/assets/icons8-customer-32.png"}
+                    className="w-10 h-10 rounded-full object-center object-cover"
+                  />
+                </div>
+                 <div className='pl-2'>
+                <div className="text-sm font-bold text-ellipsis overflow-hidden whitespace-nowrap">
+                  {channelName! || channel.id!}                  
+                </div>   
+        <div className='text-sm'>
+          <p >{getWatcherText(watcher_count)}</p>
+        </div> </div>
+    </div>
+    </div>
+  );
+ }
+};
+
 function Channels({ loadedChannels }: ChannelListMessengerProps) {
   const navigate = useNavigate()
   const { logout } = useLoggedInAuth()
@@ -108,8 +235,7 @@ function Channels({ loadedChannels }: ChannelListMessengerProps) {
   const { user, streamChat } = useLoggedInAuth()
  
     
-  return (
-    
+  return (    
     <div className="w-65 flex flex-col gap-4 m-3 h-full">
       <div className="w-65 boder-none flex flex-col gap-2 m-0" >      
         <div className="w-65 boder-none flex flex-col gap-2 mb-2 float-left inline-block">
@@ -122,11 +248,10 @@ function Channels({ loadedChannels }: ChannelListMessengerProps) {
           </button>
         </div>       
       <Button          
-          onClick={() => navigate("/channel/new")}>{user.name}</Button>
+          onClick={() => navigate("/channel/new")}>New Conversation</Button>
       <hr className="border-gray-500" />
-      </div>
-      
-      <div className="mt-0 w-60 flex flex-col gap-2 m-3 h-full items-center channel-list-container">
+      </div>      
+      <div className="mt-0 w-60 flex flex-col gap-2 m-3 h-full items-center channel-list-container ">
       {loadedChannels != null && loadedChannels.length > 0
         ? loadedChannels.map(channel => {
             const isActive = channel === activeChannel
@@ -136,80 +261,50 @@ function Channels({ loadedChannels }: ChannelListMessengerProps) {
             }
             else {
                extraClasses = isActive
-              ? "bg-blue-500 text-white"
+              ? "bg-blue-500 text-white rounded-2xl"
               : "hover:bg-blue-100 bg-gray-100"  
             }
-            let channelName = channel.data?.name
-            const regex = new RegExp("\\b" + user.name + "\\b", "g");
-            channelName = channelName?.replace(regex, "");
-            channelName = channelName?.split(' : ').join("");
-            const renderMessageText = () => {
-              const lastMessageText = channel.state.messages[channel.state.messages.length - 1].text;
-          
-              const text = lastMessageText || 'message text';
-          
-              return text.length < 60 ? lastMessageText : `${text.slice(0, 70)}...`;
-            };
-                                               
-              try {
-              channel.on( event => {
-                 
-                 const notifMessage = event.message?.id
-            
-                 if (event.type === 'message.new' && event.unread_count! > 0) {   
-                         
-                 /* // console.log(channel.data?.name)
-                  toast.dismiss()
-                 toast.success("New Message: " + event.user.name)
-                 const sound = new Audio('/assets/sound17.ogg');
-                 sound.volume = 0.5
-                  sound.play();  */   
-                 // extraClasses = "hover:bg-blue-100 bg-gray-100"            
-                 
-                 if (!(sentNotifications.includes(notifMessage!))) {
-                    
-                    sentNotifications.push(notifMessage!);  
-                    toast.dismiss() 
-                    toast.success(event.user?.name + " : " + event.message?.text)                 
-                   const notification = new Notification(event.user?.name!, {
-                        body: event.message?.text,                    
-                      })   
-                                                     
-                    }                                             
-      
-                //  document.getElementById('favicon').href =
-                  //  'https://d1nhio0ox7pgb.cloudfront.net/_img/g_collection_png/standard/128x128/bell.png';
-                }
-      
-                //if (event.type === 'message.read' && !event.total_unread_count) {
-                 // document.getElementById('favicon').href = '/vite.svg';
-                 // }
-                
-                if (event.type === 'message.read' ) {
-                    sentNotifications = []
-                    }                      
-              });  
-            } catch (err) {              
-              console.log(err);
-              return;
-            }
-            
+            let channelName : string = "";
+            let imageSource : string = "";
+           // console.log(channel)
+           const user2 = user;
+           const members = Object.values(channel.state.members).filter(({ user }) => user?.id !== user2.id)
+           if (channel?.data?.type==="team") {       
+              channelName = channel.data.name!;
+              imageSource = "/assets/icons8-hashtags-64.png"
+           }
+           else {
+              const channelName = members[0]?.user?.fullName || members[0]?.user?.name || members[0]?.user?.id || "Unknown";              
+              imageSource = members[0]?.user?.image || "/assets/icons8-customer-plain-32.png";
+           }
+           
+           const { messages } = channel.state;          
+           let messagePreview = messages[messages.length - 1]?.text?.slice(0, 30);           
+           
+           if ((messages[messages.length - 1]?.attachments!.length > 0) &&  (messagePreview===""))
+             messagePreview = "Attachment...";
+                             
+                                                                
             return (
               <button
                 onClick={() => setActiveChannel(channel)}
                 disabled={isActive}
-                className={` w-11/12 p-2 rounded-lg flex gap-3 items-center ${extraClasses}`}
+                className={` w-full p-2 grid grid-cols-5 items-center ${extraClasses}`}
                 key={channel.id}
+                data-count="5"
               >
-              {channel.data?.image && (
+              {imageSource && (
                   <img
-                    src={channel.data.image}
-                    className="w-10 h-10 rounded-full object-center object-cover"
+                    src={imageSource}
+                    className="w-10 h-10 rounded-full object-center object-cover col-span-1"
                   />
                 )}
-                <div className="text-ellipsis overflow-hidden whitespace-nowrap">
-                  {channelName || channel.id}
-                </div>   
+                 
+                <div className="pl-2 text-left text-ellipsis overflow-hidden whitespace-nowrap col-span-4 ">
+                  <p className="font-bold text-sm">{channelName || channel.id}</p>
+                  <p className="text-xs">{messagePreview}</p>                  
+                </div> 
+                               
               </button>
             )
           })
