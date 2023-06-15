@@ -18,6 +18,7 @@ import {
 import { ChannelListMessengerProps } from "stream-chat-react/dist/components"
 import { useChatContext } from "stream-chat-react/dist/context"
 import { Button } from "../components/Button"
+//import '@stream-io/stream-chat-css/dist/v2/css/index.css';
 
 
 import { useLoggedInAuth } from "../context/AuthContext"
@@ -42,6 +43,7 @@ export function Home() {
   const { user, streamChat,  } = useLoggedInAuth()
   const [showNotificationBanner, setShowNotificationBanner] = useState(false);
   const theme = urlParams.get('theme') || 'light';
+  const sort = { last_message_at: -1 } as const;
   
   if (streamChat == null) return <LoadingIndicator />
   
@@ -90,35 +92,23 @@ export function Home() {
     }
 
     
-     
-  return (           
-    <Chat client={streamChat} >      
-      <ToastContainer />      
-      {showNotificationBanner && (
-          <div className="alert">
-            <p>
-              PFS needs your permission to&nbsp;
-              <button onClick={grantPermission}>
-                enable desktop notifications
-              </button>
-            </p>
-          </div>
-        )}                          
-        <ChannelList       
+  return (               
+    <Chat client={streamChat}  >                            
+      <ChannelList       
         List={Channels}
+        sort={sort}
         sendChannelsToList               
-        filters={ {$and: [{ members: { $in: [user.id] } },{ teams: {}  }]}}
-        Paginator={InfiniteScroll}
-      />
+        filters={ {$and: [{ members: { $in: [user.id] } },{ teams: {}  }]}}       
+      />      
       <Channel>
-        <Window>              
-          <CustomChannelHeader />                                          
-          <MessageList />
-          <MessageInput />
-        </Window>
-        <Thread />
-      </Channel>      
-    </Chat>
+        <Window>        
+          <CustomChannelHeader />        
+          <MessageList />        
+          <MessageInput />        
+        </Window>        
+        <Thread />        
+      </Channel>       
+    </Chat>    
   )
 }
   
@@ -164,11 +154,11 @@ function CustomChannelHeader  (props: ChannelHeaderProps) {
                         className="w-10 h-10 rounded-full object-center object-cover bg-blue-200"
                 />           
             </div>
-            <div className="pl-2">
-                <div className="float-left text-sm font-bold text-ellipsis overflow-hidden whitespace-nowrap">
+            <div className="pl-2 block">
+                <div className="block text-sm font-bold text-ellipsis overflow-hidden whitespace-nowrap">
                       {title || name}               
                 </div>   
-                <div className='clear-left text-sm'>
+                <div className='block text-sm'>
                     <p>{members.length} members, {getWatcherText(watcher_count)}</p>
                 </div> 
             </div>
@@ -236,8 +226,8 @@ function Channels({ loadedChannels }: ChannelListMessengerProps) {
  
     
   return (    
-    <div className="w-65 flex flex-col gap-4 m-3 h-full">
-      <div className="w-65 boder-none flex flex-col gap-2 m-0" >      
+    <div className="w-65 flex flex-col gap-2 mt-3 h-full ">
+      <div className="w-65 boder-none flex flex-col gap-2 m-0 pl-3 pr-3" >      
         <div className="w-65 boder-none flex flex-col gap-2 mb-2 float-left inline-block">
           <button 
              disabled
@@ -251,7 +241,7 @@ function Channels({ loadedChannels }: ChannelListMessengerProps) {
           onClick={() => navigate("/channel/new")}>New Conversation</Button>
       <hr className="border-gray-500" />
       </div>      
-      <div className="mt-0 w-60 flex flex-col gap-2 m-3 h-full items-center channel-list-container ">
+      <div className="mt-0 mb-3 w-full flex flex-col  h-full items-center channel-list-container ">
       {loadedChannels != null && loadedChannels.length > 0
         ? loadedChannels.map(channel => {
             const isActive = channel === activeChannel
@@ -261,7 +251,7 @@ function Channels({ loadedChannels }: ChannelListMessengerProps) {
             }
             else {
                extraClasses = isActive
-              ? "bg-blue-500 text-white rounded-2xl"
+              ? "bg-blue-500 text-white "
               : "hover:bg-blue-100 bg-gray-100"  
             }
             let channelName : string = "";
@@ -274,7 +264,7 @@ function Channels({ loadedChannels }: ChannelListMessengerProps) {
               imageSource = "/assets/icons8-hashtags-64.png"
            }
            else {
-              const channelName = members[0]?.user?.fullName || members[0]?.user?.name || members[0]?.user?.id || "Unknown";              
+              channelName = (members[0]?.user?.fullName || members[0]?.user?.name || members[0]?.user?.id || "Unknown") as string;              
               imageSource = members[0]?.user?.image || "/assets/icons8-customer-plain-32.png";
            }
            
@@ -283,24 +273,27 @@ function Channels({ loadedChannels }: ChannelListMessengerProps) {
            
            if ((messages[messages.length - 1]?.attachments!.length > 0) &&  (messagePreview===""))
              messagePreview = "Attachment...";
-                             
+             
+            let unreadCount : string = ""; 
+            if (channel.state.unreadCount > 0){
+               unreadCount = channel.state.unreadCount.toString();
+            }
                                                                 
             return (
               <button
                 onClick={() => setActiveChannel(channel)}
-                disabled={isActive}
-                className={` w-full p-2 grid grid-cols-5 items-center ${extraClasses}`}
-                key={channel.id}
-                data-count="5"
+                disabled={isActive}                
+                className={`w-full p-2 grid grid-cols-12 items-center border-b border-gray-50 ${extraClasses}`} 
+                key={channel.id}                
               >
               {imageSource && (
                   <img
                     src={imageSource}
-                    className="w-10 h-10 rounded-full object-center object-cover col-span-1"
+                    className="w-10 h-10 rounded-full object-center object-cover col-span-2"
                   />
                 )}
                  
-                <div className="pl-2 text-left text-ellipsis overflow-hidden whitespace-nowrap col-span-4 ">
+                <div className="pl-2 text-left text-ellipsis overflow-hidden whitespace-nowrap col-span-10 ">
                   <p className="font-bold text-sm">{channelName || channel.id}</p>
                   <p className="text-xs">{messagePreview}</p>                  
                 </div> 
@@ -310,9 +303,13 @@ function Channels({ loadedChannels }: ChannelListMessengerProps) {
           })
         : "No Conversations"}
       <hr className="border-gray-500 mt-auto" />
-      <Button onClick={() => navigate("/logout")} disabled={logout.isLoading}>
-        Logout
-      </Button>
+      <div className="w-11/12 mt-1 mb-1">
+        <Button                 
+                onClick={() => navigate("/logout")} disabled={logout.isLoading}>
+          Logout
+        </Button>
+        </div>
+      
 </div>
    </div>
   )

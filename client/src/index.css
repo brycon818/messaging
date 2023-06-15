@@ -25,6 +25,8 @@
 
   .channel-list-container {       
     overflow-y: auto; /* Enable vertical scrolling */
+    scrollbar-gutter: auto;
+    scrollbar-width: thin;
   }
 
   a {
@@ -142,4 +144,36 @@
   display: block;
   border: 0;
 }
+
+
+.button26 { 
+  position: relative; 
+}
+
+.button26:before {
+  content: attr(data-count);
+  width: 18px;
+  height: 18px;
+  line-height: 18px;
+  text-align: center;
+  display: block;
+  border-radius: 50%;
+  background: rgb(236, 5, 36);
+  border: 1px solid #FFF;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+  color: #FFF;
+  position: absolute;
+  top: 5px;
+  left: 8px;
+}
+
+.button26.badge-top-right:before {
+  left: auto;
+  right: 1px;
+}
+
+      
+    
+
+
 
