@@ -93,7 +93,7 @@ export function Home() {
     }
 
     
-  return (             
+  return (     
     <Chat client={streamChat}  >                            
       {showNotificationBanner && (
         <div className="alert">
@@ -110,16 +110,16 @@ export function Home() {
         sort={sort}
         sendChannelsToList               
         filters={ {$and: [{ members: { $in: [user.id] } },{ teams: {}  }]}}     
-      />      
+      />       
       <Channel>
         <Window>        
           <CustomChannelHeader />                 
-          <VirtualizedMessageList />   
+          <MessageList />   
           <MessageInput />        
         </Window>        
         <Thread />        
       </Channel>       
-    </Chat>    
+    </Chat>        
   )
 }
 
