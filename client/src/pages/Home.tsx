@@ -13,7 +13,7 @@ import {
   Avatar,
   useChannelStateContext,
   ChannelHeaderProps,
-  InfiniteScroll,
+  VirtualizedMessageList
 } from "stream-chat-react"
 import { ChannelListMessengerProps } from "stream-chat-react/dist/components"
 import { useChatContext } from "stream-chat-react/dist/context"
@@ -82,8 +82,9 @@ export function Home() {
         Notification.requestPermission().then(result => {
           if (result === 'granted') {
             window.location.reload();
-            new Notification('New message from PFS', {
+            new Notification('New message from Prithibi', {
               body: 'Nice, notifications are now enabled!',
+              icon: "./public/assets/favicon.png",
             });
           }
         });
@@ -112,8 +113,13 @@ export function Home() {
       />      
       <Channel>
         <Window>        
-          <CustomChannelHeader />        
-          <MessageList />        
+          <CustomChannelHeader />       
+          <VirtualizedMessageList
+              additionalVirtuosoProps={{
+                increaseViewportBy: { top: 400, bottom: 200 }
+              }}
+            /> 
+            
           <MessageInput />        
         </Window>        
         <Thread />        
@@ -295,7 +301,7 @@ function Channels({ loadedChannels }: ChannelListMessengerProps) {
             //&& channel.state.unreadCount > 0
 
             channel.on( event => {      
-              if (event.type === 'message.new' ) { 
+              if (event.type === 'message.new' && channel.state.unreadCount > 0 ) { 
                 const existingNotification = window.Notification && window.Notification.permission === "granted"
               ? window.navigator.serviceWorker.getRegistration().then(registration => {
                   return registration?.getNotifications({ tag: event.message?.id });
@@ -312,7 +318,8 @@ function Channels({ loadedChannels }: ChannelListMessengerProps) {
                   const notification = new Notification(event.user?.name!, {
                     body: event.message?.text, 
                     icon: "./public/assets/favicon.png",
-                    tag: event.message?.id
+                    tag: event.message?.id,
+                    requireInteraction: true
                   })   
                 }
               });  
