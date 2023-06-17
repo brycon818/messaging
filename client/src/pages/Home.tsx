@@ -113,13 +113,8 @@ export function Home() {
       />      
       <Channel>
         <Window>        
-          <CustomChannelHeader />       
-          <VirtualizedMessageList
-              additionalVirtuosoProps={{
-                increaseViewportBy: { top: 400, bottom: 200 }
-              }}
-            /> 
-            
+          <CustomChannelHeader />                 
+          <VirtualizedMessageList />   
           <MessageInput />        
         </Window>        
         <Thread />        
