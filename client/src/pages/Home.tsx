@@ -40,32 +40,32 @@ let sentNotifications : string[] = [];
 
 export function Home() {  
   const urlParams = new URLSearchParams(window.location.search);
-  const { user, streamChat,  } = useLoggedInAuth()
+  const { user, streamChat  } = useLoggedInAuth()
   const [showNotificationBanner, setShowNotificationBanner] = useState(false);
   const theme = urlParams.get('theme') || 'light';
   const sort = { last_message_at: -1 } as const;
   
-  if (streamChat == null) return <LoadingIndicator />
   
-
  /* useEffect(() => {
-    channel.on( event => {
-      event.preventDefault();
+    channel.on( event => {      
       if (event.type === 'message.new' && event.unread_count! > 0) { 
         const notification = new Notification(event.user?.name!, {
           body: event.message?.text,                    
         })   
       }
     });
-  }, [channel]);*/
+  }, []);*/
+
+  if (streamChat == null) return <LoadingIndicator />
+   
   
-  
-  if (!(
+  /*if (!(
     window.Notification &&
     (Notification.permission === 'granted' ||
       Notification.permission === 'denied')
-  ))
-    {
+  ))*/
+  if (Notification.permission === 'default')
+    {      
     if (!showNotificationBanner)
     setShowNotificationBanner(true);   }
 
@@ -91,14 +91,40 @@ export function Home() {
       setShowNotificationBanner(false);
     }
 
+  const customOnMessageNew = async (setChannels, event) => {
+      const eventChannel = event.channel;
+      console.log("new message");
+      toast.success(event.user?.name + " : " + event.message?.text);       
+      
     
-  return (               
+      try {
+        const newChannel = streamChat.channel(eventChannel.type, eventChannel.id);
+        await newChannel.watch();
+        setChannels((channels) => [newChannel, ...channels]);
+      } catch (error) {
+        console.log(error);
+      }
+    };  
+
+    
+  return (             
     <Chat client={streamChat}  >                            
+      {showNotificationBanner && (
+        <div className="alert">
+          <p>
+            Prithibi needs your permission to&nbsp;
+            <button onClick={grantPermission}>
+              enable desktop notifications
+            </button>
+          </p>
+        </div>
+      )}     
       <ChannelList       
         List={Channels}
         sort={sort}
         sendChannelsToList               
-        filters={ {$and: [{ members: { $in: [user.id] } },{ teams: {}  }]}}       
+        filters={ {$and: [{ members: { $in: [user.id] } },{ teams: {}  }]}}     
+        onChannelUpdated={customOnMessageNew}  
       />      
       <Channel>
         <Window>        
@@ -111,7 +137,10 @@ export function Home() {
     </Chat>    
   )
 }
-  
+
+
+
+
 function CustomChannelHeader  (props: ChannelHeaderProps) {
   const { title } = props;
   const navigate = useNavigate()
@@ -276,8 +305,37 @@ function Channels({ loadedChannels }: ChannelListMessengerProps) {
              
             let unreadCount : string = ""; 
             if (channel.state.unreadCount > 0){
-               unreadCount = channel.state.unreadCount.toString();
+               unreadCount = channel.state.unreadCount.toString();                              
             }
+            
+            //&& channel.state.unreadCount > 0
+
+            channel.on( event => {      
+              if (event.type === 'message.new' ) { 
+                const existingNotification = window.Notification && window.Notification.permission === "granted"
+              ? window.navigator.serviceWorker.getRegistration().then(registration => {
+                  return registration?.getNotifications({ tag: event.message?.id });
+                })
+              : Promise.resolve([]);
+            
+            existingNotification.then(notifications => {
+                if (notifications && notifications.length > 0) {
+                  // close notification
+                 // notifications[0].close();                                    
+                }                 
+                else {
+                  // Create a new notification
+                  const notification = new Notification(event.user?.name!, {
+                    body: event.message?.text, 
+                    icon: "./public/assets/favicon.png",
+                    tag: event.message?.id
+                  })   
+                }
+              });  
+
+                
+              }
+            });
                                                                 
             return (
               <button
