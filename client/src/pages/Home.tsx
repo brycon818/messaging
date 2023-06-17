@@ -91,21 +91,6 @@ export function Home() {
       setShowNotificationBanner(false);
     }
 
-  const customOnMessageNew = async (setChannels, event) => {
-      const eventChannel = event.channel;
-      console.log("new message");
-      toast.success(event.user?.name + " : " + event.message?.text);       
-      
-    
-      try {
-        const newChannel = streamChat.channel(eventChannel.type, eventChannel.id);
-        await newChannel.watch();
-        setChannels((channels) => [newChannel, ...channels]);
-      } catch (error) {
-        console.log(error);
-      }
-    };  
-
     
   return (             
     <Chat client={streamChat}  >                            
@@ -124,7 +109,6 @@ export function Home() {
         sort={sort}
         sendChannelsToList               
         filters={ {$and: [{ members: { $in: [user.id] } },{ teams: {}  }]}}     
-        onChannelUpdated={customOnMessageNew}  
       />      
       <Channel>
         <Window>        
