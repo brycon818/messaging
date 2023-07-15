@@ -169,10 +169,10 @@ function CustomChannelHeader  (props: ChannelHeaderProps) {
                 />           
             </div>
             <div className="pl-2 block">
-                <div className="block text-sm font-bold text-ellipsis overflow-hidden whitespace-nowrap">
+                <div className="flex text-sm font-bold text-ellipsis overflow-hidden whitespace-nowrap">
                       {title || name}               
                 </div>   
-                <div className='block text-sm'>
+                <div className='flex text-sm'>
                     <p>{members.length} members, {getWatcherText(watcher_count)}</p>
                 </div> 
             </div>
