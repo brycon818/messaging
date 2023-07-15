@@ -1,6 +1,8 @@
 import { FastifyInstance } from "fastify"
 import { StreamChat } from "stream-chat"
 
+
+console.log("secret: " + process.env.STREAM_PRIVATE_API_KEY!);
 const streamChat = StreamChat.getInstance(
   process.env.STREAM_API_KEY!,
   process.env.STREAM_PRIVATE_API_KEY!
