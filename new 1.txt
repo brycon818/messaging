@@ -1,0 +1,190 @@
+nativefier http://129.146.52.58:5173 -n PriChat --ignore-certificate --insecure -i icon.ico --tray true --clear-cache true --single-instance true
+
+nativefier http://localhost:3000 -n PriChat_dev --ignore-certificate --insecure -i icon.ico --tray true --clear-cache true --single-instance true
+
+
+#    listen 443 ssl; # managed by Certbot
+ #   ssl_certificate /etc/letsencrypt/live/demo-messaging.prithibiconsulting.com/fullchain.pem; # managed by Certbot
+  #  ssl_certificate_key /etc/letsencrypt/live/demo-messaging.prithibiconsulting.com/privkey.pem; # managed by Certbot
+  #  include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+   # ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+
+
+
+nativefier https://demo-messaging.prithibiconsulting.com:5173 -n PriChat-demo --clear-cache true --single-instance true -p mac --verbose
+
+nativefier https://demo-messaging.prithibiconsulting.com:5173 -n PriChat-demo -i icon.ico --tray true --clear-cache true --single-instance true 
+
+http://localhost:5000
+
+
+
+sudo rsync -a --delete /home/ubuntu/pcds_chat/client/build/. /var/www/pcds-chat
+
+
+git remote set-url origin https://github.com/brycon818/messaging.git
+
+
+
+
+rsync -a --delete /home/ubuntu/messaging/client/dist/. /var/www/html
+
+
+
+<div className="channel-list__sidebar__icon2">
+            <div className="icon1__inner" onClick={logout}>
+                <img src={LogoutIcon} alt="Logout" width="25" />
+            </div>
+        </div>
+		
+		
+		<div className="logout_button__icon3">
+                 <div className="icon1__inner" onClick={() => editProfile()} >
+                    <img src={ProfileEditIcon} alt="Edit Profile" width="40" />
+                </div>
+              </div>
+			  
+			  
+			  <div className="channel-list__sidebar__icon2">
+            <div className="icon1__inner" onClick={() => setIsEditingProfile(true)}>
+                <img src={ProfileEditIcon} alt="Edit Profile" width="40" />
+            </div>
+        </div>
+		
+		
+		$2b$10$mPIx2a1nc3mWWQiOhwG3NOHzZ.0DgTS1r.rFFFBKgRXnSiRV2N62C
+		$2b$10$mPIx2a1nc3mWWQiOhwG3NOHzZ.0DgTS1r.rFFFBKgRXnSiRV2N62C
+		$2b$10$mPIx2a1nc3mWWQiOhwG3NOHzZ.0DgTS1r.rFFFBKgRXnSiRV2N62C
+		hashed password: $2b$10$mPIx2a1nc3mWWQiOhwG3NOHzZ.0DgTS1r.rFFFBKgRXnSiRV2N62C
+		
+		
+    useEffect(() => {
+        domUsername.current.focus();
+      }, [cookies]);
+	  
+	  
+	   { (showConfirm) && (
+          <ConfirmModal
+        isOpen={showConfirm}
+        message="Are you sure you want to logout?"
+        onConfirm={handleConfirm}
+        onCancel={handleCancel}
+      />)}
+	  
+	  
+	  
+	  const existingNotification = window.Notification && window.Notification.permission === "granted"
+                ?  window.navigator.serviceWorker.getRegistration().then(registration => {
+                    return registration?.getNotifications({ tag: event.message?.id });
+                  })
+                : Promise.resolve([]);
+	  
+	  
+	  existingNotification.then(notifications => {
+                  
+                  if (notifications && notifications.length > 0) {
+                    // close notification
+                   // notifications[0].close();           
+                   console.log("duplicate_message")     ;                    
+                  }                 
+                  else {
+                    // Create a new notification
+                    //console.log("messageId: " + messageId);
+                    //console.log("event message Id: " + event.message.id);
+                    if (messageId !== event.message.id) {
+                        setMessageId(event.message.id);
+                    
+                            const notification = new Notification(event.user.name, {
+                            body: event.message?.text, 
+                            icon: "./favicon.png",
+                            tag: event.message?.id,
+                            // requireInteraction: true
+                            }).show;
+                    }
+                  }
+                });
+				
+				
+				channel.on( event => {      
+               
+                if (event.type === 'message.new' && channel.state.unreadCount > 0 ) { 
+                    console.log(event.message.id);
+                    const notification = new Notification(event.user.name, {
+                        body: event.message?.text, 
+                        icon: "./favicon.png",
+                        tag: "bryan",
+                        renotify: true
+                        }).show;                                
+
+              
+             }
+			 
+			 
+			 
+			 channel.on( 'message.new', event => {   
+                if (event.type === 'message.new' && channel.state.unreadCount > 0 ) { 
+                    console.log("message_id: " + messageId);
+                    setMessageId(event.message.id);
+                    console.log("event message_id: " + event.message.id);
+                    setCount(count+1);
+                    console.log("counter: " + count);
+                    
+                    const notification = new Notification(event.user.name, {
+                        body: event.message?.text, 
+                        icon: "./favicon.png",
+                        tag: "bryan",
+                        renotify: false
+                        }).show;                                
+
+              
+             }
+        });
+		
+		
+		
+		 .channel-preview__wrapper__selected {
+    height: auto;
+    display: flex;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.2);
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+    font-weight: bold;
+    margin-right: 0px;
+    cursor: pointer;
+    z-index: 2;
+  }
+  
+  .channel-preview__wrapper:hover {
+    background: rgba(0, 0, 0, 0.2);
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+    font-weight: bold;
+    margin-right: 0px;
+    cursor: pointer;
+  }
+  
+  
+  
+///*****************************************************************************************////
+July 26, 2023
+1. add tagging as a hotline channel
+2. add ability of admin to reset password
+3. create mac os version
+
+
+  
+///*****************************************************************************************////
+July 28, 2023
+https://demo-messaging.prithibiconsulting.com/login?username=[username]
+
+we have 2 sample usernames:
+1. crew-01
+2. pcds-admin
+
+If you would like to create more users, you may use this temporary link
+https://demo-messaging.prithibiconsulting.com/signup
+
+it is assumed that the users have been already authenticated in PFS,
+that is why we are not requiring the password.
+

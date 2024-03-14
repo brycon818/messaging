@@ -19,10 +19,10 @@ export async function userRoutes(app: FastifyInstance) {
         return res.status(400).send
       }
 
-      const existingUsers = await streamChat.queryUsers({ id })
-      if (existingUsers.users.length > 0) {
-        return res.status(400).send("User ID taken")
-      }
+      //const existingUsers = await streamChat.queryUsers({ id })
+      //if (existingUsers.users.length > 0) {
+        //return res.status(400).send("User ID taken")
+      //}
 
       await streamChat.upsertUser({ id, name, image })
     }
